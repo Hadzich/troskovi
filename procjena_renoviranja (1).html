@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Procjena renoviranja — Sarajevo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,900&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f4efe6;
+  --paper-dark: #ebe4d6;
+  --ink: #1a1612;
+  --ink-soft: #4a3f33;
+  --accent: #b04a2f;
+  --accent-dark: #8a3621;
+  --accent-soft: #d97a5e;
+  --line: #1a1612;
+  --grid: rgba(26, 22, 18, 0.08);
+  --shadow: rgba(26, 22, 18, 0.12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.5;
+  background-image:
+    radial-gradient(circle at 1px 1px, var(--grid) 1px, transparent 0);
+  background-size: 24px 24px;
+  min-height: 100vh;
+}
+
+.page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+/* HEADER */
+.masthead {
+  border-top: 4px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  padding: 1.5rem 0 1rem;
+  margin-bottom: 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.masthead-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.masthead-meta span {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 900;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.5rem;
+  font-variation-settings: "opsz" 144;
+}
+
+h1 .accent {
+  color: var(--accent);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.subtitle {
+  font-family: 'Fraunces', serif;
+  font-size: 1.25rem;
+  font-style: italic;
+  color: var(--ink-soft);
+  font-weight: 400;
+  max-width: 700px;
+  margin-bottom: 3rem;
+  border-left: 3px solid var(--accent);
+  padding-left: 1.25rem;
+}
+
+/* SUMMARY CARDS */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1px;
+  background: var(--ink);
+  border: 1px solid var(--ink);
+  margin-bottom: 4rem;
+}
+
+.summary-card {
+  background: var(--paper);
+  padding: 1.75rem 1.5rem;
+  position: relative;
+  transition: background 0.3s;
+}
+
+.summary-card:hover {
+  background: var(--paper-dark);
+}
+
+.summary-card.featured {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.summary-card.featured:hover {
+  background: var(--ink);
+}
+
+.summary-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 0.5rem;
+}
+
+.summary-card.featured .summary-label {
+  color: var(--accent-soft);
+}
+
+.summary-value {
+  font-family: 'Fraunces', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.25rem;
+}
+
+.summary-range {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+.summary-card.featured .summary-range {
+  color: var(--accent-soft);
+}
+
+.summary-unit {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 0.5rem;
+}
+
+/* CONTROLS */
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+}
+
+.toggle {
+  display: flex;
+  background: var(--paper-dark);
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  padding: 3px;
+}
+
+.toggle button {
+  background: transparent;
+  border: none;
+  padding: 0.4rem 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  color: var(--ink-soft);
+  border-radius: 999px;
+  transition: all 0.2s;
+}
+
+.toggle button.active {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+input[type="number"] {
+  font-family: 'JetBrains Mono', monospace;
+  background: transparent;
+  border: 1px solid var(--ink);
+  padding: 0.3rem 0.5rem;
+  width: 60px;
+  text-align: right;
+  font-size: 0.85rem;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+input[type="number"]:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* SECTIONS */
+.section {
+  margin-bottom: 2.5rem;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+}
+
+.section-header {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.section-header:hover {
+  background: var(--accent-dark);
+}
+
+.section-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.section-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--accent-soft);
+  letter-spacing: 0.1em;
+}
+
+.section-total {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--accent-soft);
+}
+
+.section-toggle-icon {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  transition: transform 0.3s;
+}
+
+.section.collapsed .section-toggle-icon {
+  transform: rotate(-90deg);
+}
+
+.section-body {
+  overflow-x: auto;
+  transition: max-height 0.3s ease-out;
+}
+
+.section.collapsed .section-body {
+  display: none;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+thead {
+  background: var(--paper-dark);
+}
+
+th {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--ink);
+  white-space: nowrap;
+}
+
+th.num { text-align: right; }
+th.center { text-align: center; }
+
+td {
+  padding: 0.7rem 0.75rem;
+  border-bottom: 1px solid var(--grid);
+  vertical-align: top;
+}
+
+td.num {
+  font-family: 'JetBrains Mono', monospace;
+  text-align: right;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+td.center { text-align: center; }
+
+td.item-name {
+  font-weight: 500;
+  min-width: 200px;
+}
+
+td.note {
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  font-style: italic;
+  max-width: 280px;
+}
+
+tr:hover {
+  background: var(--paper-dark);
+}
+
+tr.subtotal {
+  background: var(--paper-dark);
+  font-weight: 700;
+  border-top: 2px solid var(--ink);
+}
+
+tr.subtotal td {
+  border-bottom: none;
+  padding: 0.85rem 0.75rem;
+}
+
+tr.subtotal .label {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+}
+
+.total-cell {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.editable {
+  background: transparent;
+  border: 1px dashed transparent;
+  padding: 0.2rem 0.3rem;
+  width: 65px;
+  text-align: right;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--accent);
+  font-weight: 600;
+  border-radius: 2px;
+  transition: all 0.15s;
+}
+
+.editable:hover {
+  border-color: var(--accent-soft);
+}
+
+.editable:focus {
+  outline: none;
+  border: 1px solid var(--accent);
+  background: var(--paper);
+}
+
+.qty-input {
+  width: 55px;
+  text-align: center;
+}
+
+/* GRAND TOTAL */
+.grand-total {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 2.5rem 2rem;
+  margin: 4rem 0 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.grand-total::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 60%;
+  height: 200%;
+  background: radial-gradient(ellipse, var(--accent-dark) 0%, transparent 60%);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.grand-total-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.grand-total-item .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+  margin-bottom: 0.75rem;
+}
+
+.grand-total-item .value {
+  font-family: 'Fraunces', serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
+}
+
+.grand-total-item .range {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--paper);
+  opacity: 0.7;
+}
+
+.grand-total-item.primary .value {
+  color: var(--accent-soft);
+  font-size: 3rem;
+}
+
+/* NOTES */
+.notes {
+  background: var(--paper-dark);
+  border-left: 4px solid var(--accent);
+  padding: 1.75rem 2rem;
+  margin-bottom: 3rem;
+}
+
+.notes h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.notes ul {
+  list-style: none;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.notes li {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  padding-left: 1.5rem;
+  position: relative;
+  color: var(--ink-soft);
+}
+
+.notes li::before {
+  content: '§';
+  position: absolute;
+  left: 0;
+  font-family: 'Fraunces', serif;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.notes strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--ink);
+  padding: 2rem 0 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+footer .reset-btn {
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  padding: 0.5rem 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+footer .reset-btn:hover {
+  background: var(--accent);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .page { padding: 2rem 1rem; }
+  .grand-total { padding: 2rem 1.25rem; }
+  .grand-total-item .value { font-size: 2rem; }
+  .grand-total-item.primary .value { font-size: 2.5rem; }
+  th, td { padding: 0.5rem 0.4rem; font-size: 0.75rem; }
+  td.note { display: none; }
+  .controls { flex-direction: column; align-items: stretch; }
+}
+
+/* PRINT */
+@media print {
+  body { background: white; }
+  .controls, footer .reset-btn { display: none; }
+  .section { break-inside: avoid; }
+  .section.collapsed .section-body { display: block; }
+}
+
+/* ANIMATIONS */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section { animation: slideUp 0.5s ease-out backwards; }
+.section:nth-child(1) { animation-delay: 0.05s; }
+.section:nth-child(2) { animation-delay: 0.1s; }
+.section:nth-child(3) { animation-delay: 0.15s; }
+.section:nth-child(4) { animation-delay: 0.2s; }
+.section:nth-child(5) { animation-delay: 0.25s; }
+.section:nth-child(6) { animation-delay: 0.3s; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header class="masthead">
+  <div class="masthead-meta">
+    Sarajevo · BiH · <span>Procjena 2026</span>
+  </div>
+  <div class="masthead-meta">
+    Kuća · 115 m² · prizemlje + sprat
+  </div>
+</header>
+
+<h1>Procjena<br>renoviranja <span class="accent">kuće.</span></h1>
+
+<p class="subtitle">
+Detaljan kalkulator troškova za potpuno renoviranje porodične kuće u Sarajevu — uključujući stolariju, podno grijanje sa toplotnom pumpom, fasadu sa 20cm izolacije, terasu i sve unutrašnje radove. Cijene su podijeljene na materijal i rad.
+</p>
+
+<div class="summary-grid">
+  <div class="summary-card featured">
+    <div class="summary-label">Ukupno sa rezervom</div>
+    <div class="summary-value" id="grand-total-min">—</div>
+    <div class="summary-range" id="grand-total-range">do —</div>
+    <div class="summary-unit">KM</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-label">Materijal</div>
+    <div class="summary-value" id="material-total">—</div>
+    <div class="summary-range" id="material-range">— do —</div>
+    <div class="summary-unit">KM</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-label">Rad / Ruke</div>
+    <div class="summary-value" id="labor-total">—</div>
+    <div class="summary-range" id="labor-range">— do —</div>
+    <div class="summary-unit">KM</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-label">U eurima</div>
+    <div class="summary-value" id="eur-total">—</div>
+    <div class="summary-range" id="eur-range">— do —</div>
+    <div class="summary-unit">EUR · 1.95583</div>
+  </div>
+</div>
+
+<div class="controls">
+  <div class="control-group">
+    <label>Prikaz cijena:</label>
+    <div class="toggle" id="view-toggle">
+      <button class="active" data-view="all">Materijal + Rad</button>
+      <button data-view="material">Samo Materijal</button>
+      <button data-view="labor">Samo Rad</button>
+    </div>
+  </div>
+  <div class="control-group">
+    <label>Rezerva:</label>
+    <input type="number" id="reserve" value="5" min="0" max="50" step="1">
+    <span>%</span>
+  </div>
+</div>
+
+<div id="sections-container"></div>
+
+<div class="grand-total">
+  <div class="grand-total-grid">
+    <div class="grand-total-item primary">
+      <div class="label">Ukupno · Sa rezervom</div>
+      <div class="value" id="gt-total-min">—</div>
+      <div class="range" id="gt-total-range">do —</div>
+    </div>
+    <div class="grand-total-item">
+      <div class="label">Po m² · 115 m²</div>
+      <div class="value" id="gt-per-m2">—</div>
+      <div class="range" id="gt-per-m2-range">do — KM/m²</div>
+    </div>
+    <div class="grand-total-item">
+      <div class="label">U eurima</div>
+      <div class="value" id="gt-eur">—</div>
+      <div class="range" id="gt-eur-range">do — EUR</div>
+    </div>
+  </div>
+</div>
+
+<div class="notes">
+  <h2>Važne napomene</h2>
+  <ul>
+    <li>Cijene su podijeljene: <strong>materijal</strong> (ono što ti kupuješ) i <strong>rad</strong> (ono što plaćaš majstorima). Klikni na bilo koji broj da ga izmijeniš.</li>
+    <li>Ako neki posao radiš sam, postavi vrijednost rada na <strong>0</strong> za tu stavku.</li>
+    <li><strong>OPREZ:</strong> za toplotnu pumpu, struju, gas, krov i statiku — ne preporučuje se DIY zbog garancije i sigurnosti.</li>
+    <li>Cijene materijala su iz maloprodajnih lanaca u BiH. Za veće količine traži <strong>rabat</strong> kod stovarišta.</li>
+    <li>PDV (17%) je obično uključen u maloprodajne cijene materijala. Kod majstorskih ponuda — <strong>uvijek pitaj</strong>.</li>
+    <li>Stiropor 20cm je optimalna debljina za Sarajevo + toplotnu pumpu (niskoenergetski standard).</li>
+    <li>Sokla fasade (donjih 30-40cm) UVIJEK od XPS stiropora — otporniji na vlagu i prskanje vode.</li>
+    <li>Toplotna pumpa + dobra fasada = realna ušteda <strong>60-70%</strong> u odnosu na grijanje na čvrsto gorivo.</li>
+    <li>Subvencije: Ministarstvo prostornog uređenja KS i UNDP povremeno daju subvencije za TP i izolaciju — provjeri prije kupovine.</li>
+    <li>Hidroizolacija terase je <strong>kritična</strong> — Sika, Mapei, Ceresit, dvije ruke. Pad od kuće prema vanjskoj ivici 1-2%.</li>
+    <li>Vanjske pločice: <strong>R10/R11 anti-slip + mraznootporne</strong>, gres porcellanato standard.</li>
+    <li>Uvijek traži minimum <strong>3 ponude</strong> za veće stavke; razlike znaju biti 30-50%.</li>
+  </ul>
+</div>
+
+<footer>
+  <span>Generirao Claude · 05.05.2026</span>
+  <button class="reset-btn" onclick="resetAll()">Resetuj sve</button>
+</footer>
+
+</div>
+
+<script>
+const DATA = {"sections": [{"title": "STOLARIJA (PROZORI I VRATA)", "items": [{"num": 1, "name": "Zamjena starih prozora — PVC, 6-7 komora, dvostruko staklo", "qty": 8, "unit": "kom", "mat_min": 350, "mat_max": 550, "rad_min": 100, "rad_max": 150, "tot_min": 3600, "tot_max": 5600, "note": "Profil+staklo+okovi vs. demontaža+ugradnja"}, {"num": 2, "name": "Mali kupatilski prozori", "qty": 2, "unit": "kom", "mat_min": 180, "mat_max": 300, "rad_min": 70, "rad_max": 100, "tot_min": 500, "tot_max": 800, "note": "Manje dimenzije"}, {"num": 3, "name": "Novi dodatni prozor (probijanje + ugradnja)", "qty": 1, "unit": "kom", "mat_min": 350, "mat_max": 550, "rad_min": 350, "rad_max": 550, "tot_min": 700, "tot_max": 1100, "note": "Više rada zbog probijanja otvora"}, {"num": 4, "name": "Balkonska vrata sa prozorom (klizna ili dvokrilna)", "qty": 2, "unit": "kom", "mat_min": 900, "mat_max": 1500, "rad_min": 300, "rad_max": 500, "tot_min": 2400, "tot_max": 4000, "note": "Veće — više materijala"}, {"num": 5, "name": "Veliki portal/staklena stijena", "qty": 1, "unit": "kom", "mat_min": 1800, "mat_max": 3500, "rad_min": 700, "rad_max": 1500, "tot_min": 2500, "tot_max": 5000, "note": "Aluminijski okvir skuplji; statika!"}, {"num": 6, "name": "Ulazna vrata (sigurnosna)", "qty": 1, "unit": "kom", "mat_min": 1000, "mat_max": 2200, "rad_min": 200, "rad_max": 300, "tot_min": 1200, "tot_max": 2500, "note": "Sigurnosna sa termo-prekidom"}, {"num": 7, "name": "Unutrašnja vrata sa štokovima i kvakama", "qty": 6, "unit": "kom", "mat_min": 180, "mat_max": 380, "rad_min": 70, "rad_max": 120, "tot_min": 1500, "tot_max": 3000, "note": "Sobna vrata srednji kvalitet"}], "subtotal": {"mat_min": 9190, "mat_max": 16530, "rad_min": 3210, "rad_max": 5470, "tot_min": 12400, "tot_max": 22000}}, {"title": "PODOVI — ESTRIH, PODNO GRIJANJE, OBLOGE", "items": [{"num": 8, "name": "Izolacija ispod estriha (stiropor 5cm) + folija", "qty": 115, "unit": "m²", "mat_min": 15, "mat_max": 25, "rad_min": 10, "rad_max": 15, "tot_min": 2875, "tot_max": 4600, "note": "Ide svuda, čak i ispod ostave/kuhinje"}, {"num": 9, "name": "Cijevi za podno grijanje (PE-X) + razdjelnici", "qty": 97, "unit": "m²", "mat_min": 22, "mat_max": 35, "rad_min": 13, "rad_max": 20, "tot_min": 3395, "tot_max": 5335, "note": "Bez stepenica, ostave i ispod kuhinjskih elemenata"}, {"num": 10, "name": "Cementni estrih (5-7cm)", "qty": 115, "unit": "m²", "mat_min": 12, "mat_max": 20, "rad_min": 13, "rad_max": 20, "tot_min": 2875, "tot_max": 4600, "note": "Ide svuda; pod ostavom sa armaturnom mrežom za nosivost"}, {"num": 11, "name": "Keramičke pločice — kupatila (2)", "qty": 25, "unit": "m²", "mat_min": 25, "mat_max": 50, "rad_min": 35, "rad_max": 50, "tot_min": 1500, "tot_max": 2500, "note": "Pločice + ljepilo + fugir-masa vs. polaganje"}, {"num": 12, "name": "Keramičke pločice — kuhinja", "qty": 12, "unit": "m²", "mat_min": 25, "mat_max": 50, "rad_min": 35, "rad_max": 50, "tot_min": 720, "tot_max": 1200, "note": null}, {"num": 13, "name": "Keramičke pločice — hodnik", "qty": 8, "unit": "m²", "mat_min": 25, "mat_max": 50, "rad_min": 35, "rad_max": 50, "tot_min": 480, "tot_max": 800, "note": null}, {"num": 14, "name": "Keramičke pločice — ostava (tehnički prostor)", "qty": 9, "unit": "m²", "mat_min": 15, "mat_max": 30, "rad_min": 25, "rad_max": 40, "tot_min": 360, "tot_max": 630, "note": "Jeftinije pločice; lako čišćenje, voda OK"}, {"num": 15, "name": "Laminat/parket — ostale prostorije", "qty": 61, "unit": "m²", "mat_min": 18, "mat_max": 45, "rad_min": 17, "rad_max": 25, "tot_min": 2135, "tot_max": 4270, "note": "Bez ostave; smanjeno za 9 m²"}, {"num": 16, "name": "Zidne pločice u kupatilima", "qty": 40, "unit": "m²", "mat_min": 20, "mat_max": 40, "rad_min": 35, "rad_max": 50, "tot_min": 2200, "tot_max": 3600, "note": "2 kupatila, do plafona"}, {"num": 17, "name": "Zidne pločice kuhinja (radna ploča)", "qty": 6, "unit": "m²", "mat_min": 20, "mat_max": 40, "rad_min": 35, "rad_max": 50, "tot_min": 330, "tot_max": 540, "note": "Iznad radne površine"}], "subtotal": {"mat_min": 8517, "mat_max": 15675, "rad_min": 8353, "rad_max": 12400, "tot_min": 16870, "tot_max": 28075}}, {"title": "GRIJANJE — TOPLOTNA PUMPA + SISTEM (samo grijanje + sanitarna)", "items": [{"num": 18, "name": "Toplotna pumpa zrak-voda 10-12 kW (samo grijanje, ne hlađenje)", "qty": 1, "unit": "kom", "mat_min": 6500, "mat_max": 10000, "rad_min": 1800, "rad_max": 2800, "tot_min": 8300, "tot_max": 12800, "note": "Jeftiniji model bez hlađenja; lokalni Termoflux ili Kineski PowerWorld"}, {"num": 19, "name": "Bojler/spremnik za sanitarnu toplu vodu (200-300L) integrisan sa TP", "qty": 1, "unit": "kom", "mat_min": 1200, "mat_max": 2000, "rad_min": 300, "rad_max": 500, "tot_min": 1500, "tot_max": 2500, "note": "Sa električnom zavojnicom kao backup"}, {"num": 20, "name": "Buffer tank + cirkulacijska pumpa + ventili", "qty": 1, "unit": "kom", "mat_min": 600, "mat_max": 1100, "rad_min": 200, "rad_max": 400, "tot_min": 800, "tot_max": 1500, "note": "Hidraulika sistema"}, {"num": 21, "name": "Termostati po zonama (sobni)", "qty": 6, "unit": "kom", "mat_min": 60, "mat_max": 160, "rad_min": 20, "rad_max": 40, "tot_min": 480, "tot_max": 1200, "note": "Sobni termostati sa ON/OFF prekidačem"}, {"num": 22, "name": "Betonska stopa za vanjsku jedinicu", "qty": 1, "unit": "kom", "mat_min": 80, "mat_max": 150, "rad_min": 120, "rad_max": 250, "tot_min": 200, "tot_max": 400, "note": "Beton + armatura vs. radnja"}, {"num": 23, "name": "Pojačanje priključka na trofazni (ako treba)", "qty": 1, "unit": "paušal", "mat_min": 200, "mat_max": 800, "rad_min": 300, "rad_max": 1200, "tot_min": 500, "tot_max": 2000, "note": "Jednokratno, kod EP BiH; provjeri prije TP-a"}], "subtotal": {"mat_min": 8940, "mat_max": 15010, "rad_min": 2840, "rad_max": 5390, "tot_min": 11780, "tot_max": 20400}}, {"title": "FASADA (CCA 20CM STIROPOR + ŽBUKA + BOJA)", "items": [{"num": 24, "name": "EPS stiropor 20cm (bijeli)", "qty": 200, "unit": "m²", "mat_min": 18, "mat_max": 26, "rad_min": 0, "rad_max": 0, "tot_min": 3600, "tot_max": 5200, "note": "20cm = optimum za Sarajevo, niskoenergetski standard"}, {"num": 25, "name": "Grafitni EPS 20cm (alternativa - 20% bolja izolacija)", "qty": 0, "unit": "m²", "mat_min": 26, "mat_max": 38, "rad_min": 0, "rad_max": 0, "tot_min": 0, "tot_max": 0, "note": "Skuplji ali bolje izolira; promijeni količinu ako biraš"}, {"num": 26, "name": "Ljepilo + tiple za stiropor (duže tiple za 20cm)", "qty": 200, "unit": "m²", "mat_min": 9, "mat_max": 13, "rad_min": 0, "rad_max": 0, "tot_min": 1800, "tot_max": 2600, "note": "Tiple moraju biti duže za 20cm stiropora"}, {"num": 27, "name": "Staklena mrežica (armatura)", "qty": 200, "unit": "m²", "mat_min": 3, "mat_max": 5, "rad_min": 0, "rad_max": 0, "tot_min": 600, "tot_max": 1000, "note": null}, {"num": 28, "name": "Ugaoni profili, okapni profili, prozorske klupice (šire za 20cm)", "qty": 1, "unit": "paušal", "mat_min": 900, "mat_max": 1700, "rad_min": 0, "rad_max": 0, "tot_min": 900, "tot_max": 1700, "note": "Klupice moraju biti šire (25-30cm) zbog debljine"}, {"num": 29, "name": "Završna žbuka (silikonska/silikatna) + boja", "qty": 200, "unit": "m²", "mat_min": 8, "mat_max": 14, "rad_min": 0, "rad_max": 0, "tot_min": 1600, "tot_max": 2800, "note": "Otpornija na UV i vlagu"}, {"num": 30, "name": "Sokla — XPS stiropor + mozaik žbuka (kulir)", "qty": 25, "unit": "m²", "mat_min": 18, "mat_max": 30, "rad_min": 0, "rad_max": 0, "tot_min": 450, "tot_max": 750, "note": "Donji dio fasade do 30-40cm"}, {"num": 31, "name": "Skela (najam za 30-60 dana)", "qty": 1, "unit": "paušal", "mat_min": 800, "mat_max": 1800, "rad_min": 0, "rad_max": 0, "tot_min": 800, "tot_max": 1800, "note": "Cijela kuća"}, {"num": 32, "name": "Rad fasaderske ekipe (ako ne radiš sam)", "qty": 200, "unit": "m²", "mat_min": 0, "mat_max": 0, "rad_min": 25, "rad_max": 40, "tot_min": 5000, "tot_max": 8000, "note": "Lijepljenje, mrežica, žbuka, sokla, sve ruke"}, {"num": 33, "name": "Skidanje stare fasade/maltera ako postoji", "qty": 200, "unit": "m²", "mat_min": 0, "mat_max": 0, "rad_min": 5, "rad_max": 15, "tot_min": 1000, "tot_max": 3000, "note": "Samo ako postojeća fasada ide dolje"}], "subtotal": {"mat_min": 9750, "mat_max": 15850, "rad_min": 6000, "rad_max": 11000, "tot_min": 15750, "tot_max": 26850}}, {"title": "TAVAN — HLADAN TAVAN + IZOLACIJA KOSINE U SOBI", "items": [{"num": 34, "name": "Horizontalna izolacija stropa: kamena vuna 15cm (sloj 1)", "qty": 45, "unit": "m²", "mat_min": 21, "mat_max": 31, "rad_min": 8, "rad_max": 13, "tot_min": 1305, "tot_max": 1980, "note": "Sloj između greda stropa"}, {"num": 35, "name": "Horizontalna izolacija stropa: kamena vuna 10cm (sloj 2)", "qty": 45, "unit": "m²", "mat_min": 14, "mat_max": 20, "rad_min": 6, "rad_max": 10, "tot_min": 900, "tot_max": 1350, "note": "Drugi sloj preko greda"}, {"num": 36, "name": "Parna brana paronepropusna (horizontalni strop)", "qty": 50, "unit": "m²", "mat_min": 2, "mat_max": 4, "rad_min": 2, "rad_max": 4, "tot_min": 200, "tot_max": 400, "note": "Sa donje strane vune"}, {"num": 37, "name": "Letve 5x5cm + OSB ploče 18mm (pod tavana)", "qty": 45, "unit": "m²", "mat_min": 22, "mat_max": 35, "rad_min": 10, "rad_max": 18, "tot_min": 1440, "tot_max": 2385, "note": "Za hodanje i skladište"}, {"num": 38, "name": "Kosina u sobi: kamena vuna 15cm između rogova", "qty": 18, "unit": "m²", "mat_min": 21, "mat_max": 31, "rad_min": 13, "rad_max": 20, "tot_min": 612, "tot_max": 918, "note": "Glavna izolacija kose strane"}, {"num": 39, "name": "Kosina u sobi: kamena vuna 5cm preko rogova", "qty": 18, "unit": "m²", "mat_min": 7, "mat_max": 11, "rad_min": 8, "rad_max": 13, "tot_min": 270, "tot_max": 432, "note": "Prekriva termalne mostove rogova"}, {"num": 40, "name": "Kosina u sobi: pametna parna brana + traka", "qty": 22, "unit": "m²", "mat_min": 7, "mat_max": 11, "rad_min": 4, "rad_max": 7, "tot_min": 242, "tot_max": 396, "note": "Knauf VARIO ili Pro Clima — bezbjednije za stari krov"}, {"num": 41, "name": "Kosina u sobi: letve potkonstrukcija + gips ploče 12.5mm", "qty": 22, "unit": "m²", "mat_min": 14, "mat_max": 20, "rad_min": 12, "rad_max": 19, "tot_min": 572, "tot_max": 858, "note": "Završna obrada"}, {"num": 42, "name": "Sklopive izolovane stepenice za tavan (Fakro/Roto)", "qty": 1, "unit": "kom", "mat_min": 600, "mat_max": 1500, "rad_min": 200, "rad_max": 400, "tot_min": 800, "tot_max": 1900, "note": "Sklopiva izolovana, ne klasične"}, {"num": 43, "name": "Sitan materijal (Tescon traka, šrafovi, glet)", "qty": 1, "unit": "paušal", "mat_min": 200, "mat_max": 400, "rad_min": 100, "rad_max": 200, "tot_min": 300, "tot_max": 600, "note": "Detalji koji se često zaborave"}], "subtotal": {"mat_min": 4431, "mat_max": 7408, "rad_min": 2210, "rad_max": 3811, "tot_min": 6641, "tot_max": 11219}}, {"title": "ELEKTRIČNE INSTALACIJE", "items": [{"num": 44, "name": "Kablovi, utičnice, prekidači, razvod (drugi sprat + tavan)", "qty": 90, "unit": "m²", "mat_min": 12, "mat_max": 22, "rad_min": 18, "rad_max": 33, "tot_min": 2700, "tot_max": 4950, "note": "Materijal vs. rad električara"}, {"num": 45, "name": "Razvodna tabla — dopuna/zamjena (sa rezervom za buduće)", "qty": 1, "unit": "kom", "mat_min": 250, "mat_max": 600, "rad_min": 250, "rad_max": 500, "tot_min": 500, "tot_max": 1100, "note": "Za TP, klime, solarne panele kasnije"}, {"num": 46, "name": "LED rasvjeta i panel rasvjeta", "qty": 1, "unit": "paušal", "mat_min": 700, "mat_max": 1700, "rad_min": 300, "rad_max": 800, "tot_min": 1000, "tot_max": 2500, "note": "Ovisi o broju i kvalitetu"}, {"num": 47, "name": "Prilagodba za toplotnu pumpu (trofazni dio)", "qty": 1, "unit": "paušal", "mat_min": 200, "mat_max": 700, "rad_min": 300, "rad_max": 800, "tot_min": 500, "tot_max": 1500, "note": "Već uračunato pojačanje u sekciji TP"}, {"num": 48, "name": "Priprema za klime (kablovi + rupe + osigurači) — 4 sobe", "qty": 1, "unit": "paušal", "mat_min": 200, "mat_max": 400, "rad_min": 200, "rad_max": 400, "tot_min": 400, "tot_max": 800, "note": "SAMO priprema; klime se kupuju kasnije"}, {"num": 49, "name": "LAN kablovi do soba (CAT6) — bonus za stabilan internet", "qty": 1, "unit": "paušal", "mat_min": 150, "mat_max": 300, "rad_min": 150, "rad_max": 300, "tot_min": 300, "tot_max": 600, "note": "Opcionalno; jeftino sad, skupo kasnije"}], "subtotal": {"mat_min": 2580, "mat_max": 5680, "rad_min": 2820, "rad_max": 5770, "tot_min": 5400, "tot_max": 11450}}, {"title": "VODOVOD I KANALIZACIJA", "items": [{"num": 50, "name": "Razvod cijevi — kupatilo 1 (komplet)", "qty": 1, "unit": "kupat.", "mat_min": 500, "mat_max": 900, "rad_min": 700, "rad_max": 1300, "tot_min": 1200, "tot_max": 2200, "note": "PPR cijevi vs. ruke vodoinstalatera"}, {"num": 51, "name": "Razvod cijevi — kupatilo 2 (komplet)", "qty": 1, "unit": "kupat.", "mat_min": 500, "mat_max": 900, "rad_min": 700, "rad_max": 1300, "tot_min": 1200, "tot_max": 2200, "note": null}, {"num": 52, "name": "Prilagodba kuhinjskih instalacija", "qty": 1, "unit": "paušal", "mat_min": 150, "mat_max": 400, "rad_min": 250, "rad_max": 500, "tot_min": 400, "tot_max": 900, "note": null}, {"num": 53, "name": "Sanitarija kupatilo 1 (WC, lavabo, tuš/kada)", "qty": 1, "unit": "set", "mat_min": 1200, "mat_max": 2900, "rad_min": 300, "rad_max": 600, "tot_min": 1500, "tot_max": 3500, "note": "Sanitarija vs. montaža"}, {"num": 54, "name": "Sanitarija kupatilo 2", "qty": 1, "unit": "set", "mat_min": 1200, "mat_max": 2900, "rad_min": 300, "rad_max": 600, "tot_min": 1500, "tot_max": 3500, "note": null}], "subtotal": {"mat_min": 3550, "mat_max": 8000, "rad_min": 2250, "rad_max": 4300, "tot_min": 5800, "tot_max": 12300}}, {"title": "PREGRADNI ZIDOVI", "items": [{"num": 55, "name": "Novi pregradni zidovi (gips/siporeks)", "qty": 30, "unit": "m²", "mat_min": 25, "mat_max": 45, "rad_min": 25, "rad_max": 45, "tot_min": 1500, "tot_max": 2700, "note": "Materijal vs. zidanje + malterisanje"}, {"num": 56, "name": "Probijanje otvora u postojećim zidovima", "qty": 2, "unit": "kom", "mat_min": 50, "mat_max": 150, "rad_min": 250, "rad_max": 550, "tot_min": 600, "tot_max": 1400, "note": "Manji materijal, više rada"}], "subtotal": {"mat_min": 850, "mat_max": 1650, "rad_min": 1250, "rad_max": 2450, "tot_min": 2100, "tot_max": 4100}}, {"title": "KUHINJA", "items": [{"num": 57, "name": "Kuhinjski elementi (po dužnom metru)", "qty": 4, "unit": "m'", "mat_min": 700, "mat_max": 1500, "rad_min": 100, "rad_max": 300, "tot_min": 3200, "tot_max": 7200, "note": "Donji+gornji ormari vs. dostava+sklapanje"}, {"num": 58, "name": "Radna ploča (kvarc, granit, ili laminat)", "qty": 4, "unit": "m'", "mat_min": 150, "mat_max": 600, "rad_min": 50, "rad_max": 100, "tot_min": 800, "tot_max": 2800, "note": null}, {"num": 59, "name": "Aparati (sudopera, slavina, napa, ploča, rerna)", "qty": 1, "unit": "set", "mat_min": 1800, "mat_max": 4500, "rad_min": 200, "rad_max": 500, "tot_min": 2000, "tot_max": 5000, "note": "Bez frižidera"}], "subtotal": {"mat_min": 5200, "mat_max": 12900, "rad_min": 800, "rad_max": 2100, "tot_min": 6000, "tot_max": 15000}}, {"title": "MALTERISANJE ZIDOVA I PLAFONA", "items": [{"num": 60, "name": "Mašinsko malterisanje unutrašnjih zidova", "qty": 220, "unit": "m²", "mat_min": 6, "mat_max": 9, "rad_min": 12, "rad_max": 15, "tot_min": 3960, "tot_max": 5280, "note": "Malter+ostalo vs. ruke + mašina"}, {"num": 61, "name": "Mašinsko malterisanje plafona", "qty": 115, "unit": "m²", "mat_min": 7, "mat_max": 10, "rad_min": 13, "rad_max": 17, "tot_min": 2300, "tot_max": 3105, "note": null}, {"num": 62, "name": "Ručno malterisanje (kupatila, špaletne)", "qty": 60, "unit": "m²", "mat_min": 8, "mat_max": 12, "rad_min": 14, "rad_max": 20, "tot_min": 1320, "tot_max": 1920, "note": "Manje površine i fini detalji"}, {"num": 63, "name": "Sanacija postojećeg maltera", "qty": 50, "unit": "m²", "mat_min": 5, "mat_max": 10, "rad_min": 10, "rad_max": 18, "tot_min": 750, "tot_max": 1400, "note": "Skidanje + popravka oštećenja"}, {"num": 64, "name": "Pocinčani ugaoni profili", "qty": 1, "unit": "paušal", "mat_min": 150, "mat_max": 300, "rad_min": 50, "rad_max": 100, "tot_min": 200, "tot_max": 400, "note": null}], "subtotal": {"mat_min": 3005, "mat_max": 4650, "rad_min": 5525, "rad_max": 7455, "tot_min": 8530, "tot_max": 12105}}, {"title": "MOLERAJ I FINALNI RADOVI", "items": [{"num": 65, "name": "Gletovanje + krečenje cijele kuće", "qty": 280, "unit": "m²", "mat_min": 4, "mat_max": 8, "rad_min": 8, "rad_max": 14, "tot_min": 3360, "tot_max": 6160, "note": "Glet+boja vs. rukama"}, {"num": 66, "name": "Sokle, lajsne, završne obrade", "qty": 1, "unit": "paušal", "mat_min": 300, "mat_max": 800, "rad_min": 300, "rad_max": 700, "tot_min": 600, "tot_max": 1500, "note": null}, {"num": 67, "name": "Čišćenje i odvoz šuta", "qty": 1, "unit": "paušal", "mat_min": 0, "mat_max": 0, "rad_min": 800, "rad_max": 2000, "tot_min": 800, "tot_max": 2000, "note": "Samo rad/usluga"}], "subtotal": {"mat_min": 1420, "mat_max": 3040, "rad_min": 3340, "rad_max": 6620, "tot_min": 4760, "tot_max": 9660}}, {"title": "VANJSKO UREĐENJE — TERASA, OGRADA, SEPTIČKA, BAGER", "items": [{"num": 68, "name": "Bager — iskop terase, septičke, ograde, niveliranje terena", "qty": 1, "unit": "paušal", "mat_min": 0, "mat_max": 0, "rad_min": 800, "rad_max": 1200, "tot_min": 800, "tot_max": 1200, "note": "Sve odjednom; bager dolazi 1 dan"}, {"num": 69, "name": "--- TERASA 3×5m (15m²) NA 40-50cm VISINE ---", "qty": 0, "unit": null, "mat_min": 0, "mat_max": 0, "rad_min": 0, "rad_max": 0, "tot_min": 0, "tot_max": 0, "note": "Naredne stavke su za terasu"}, {"num": 70, "name": "Tampon (drobljeni kamen) ispod terase", "qty": 8, "unit": "m³", "mat_min": 30, "mat_max": 50, "rad_min": 80, "rad_max": 150, "tot_min": 880, "tot_max": 1600, "note": "5-10 cm sloj zbijenog tampona"}, {"num": 71, "name": "Šalovanje terase i potpornih zidova (40-50cm)", "qty": 1, "unit": "paušal", "mat_min": 200, "mat_max": 400, "rad_min": 600, "rad_max": 1000, "tot_min": 800, "tot_max": 1400, "note": "Oplata za bočne zidove + ploču"}, {"num": 72, "name": "Beton MB25/30 za ploču + zidove (cca 4-5 m³)", "qty": 5, "unit": "m³", "mat_min": 130, "mat_max": 175, "rad_min": 80, "rad_max": 130, "tot_min": 1050, "tot_max": 1525, "note": "Beton sa transportom + ugradnja"}, {"num": 73, "name": "Armaturna mreža Q188 + šipke za potporne zidove", "qty": 15, "unit": "m²", "mat_min": 18, "mat_max": 28, "rad_min": 8, "rad_max": 15, "tot_min": 390, "tot_max": 645, "note": "Armatura ploče + vertikale"}, {"num": 74, "name": "Hidroizolacija terase (Sikalastic)", "qty": 15, "unit": "m²", "mat_min": 25, "mat_max": 40, "rad_min": 15, "rad_max": 25, "tot_min": 600, "tot_max": 975, "note": "OBAVEZNO; sprečava prokišnjavanje"}, {"num": 75, "name": "Vanjske pločice (mraznootporne, anti-slip)", "qty": 15, "unit": "m²", "mat_min": 35, "mat_max": 70, "rad_min": 35, "rad_max": 50, "tot_min": 1050, "tot_max": 1800, "note": "Gres porcellanato za vanjsku upotrebu"}, {"num": 76, "name": "Stepenice ka terasi (2-3 stepenika)", "qty": 1, "unit": "paušal", "mat_min": 200, "mat_max": 500, "rad_min": 300, "rad_max": 700, "tot_min": 500, "tot_max": 1200, "note": "Beton + obloga"}, {"num": 77, "name": "Ograda terase 16m' (drvena/metalna/staklena)", "qty": 16, "unit": "m'", "mat_min": 100, "mat_max": 400, "rad_min": 50, "rad_max": 150, "tot_min": 2400, "tot_max": 8800, "note": "Po obimu terase"}, {"num": 78, "name": "Završno fugiranje terase + silikoni", "qty": 1, "unit": "paušal", "mat_min": 80, "mat_max": 150, "rad_min": 100, "rad_max": 200, "tot_min": 180, "tot_max": 350, "note": "Fugir-masa za vanjsku upotrebu"}, {"num": 79, "name": "--- SEPTIČKA JAMA ---", "qty": 0, "unit": null, "mat_min": 0, "mat_max": 0, "rad_min": 0, "rad_max": 0, "tot_min": 0, "tot_max": 0, "note": "Plastična, 4 osobe"}, {"num": 80, "name": "Plastična septička jama 3-5 m³ (PEHD)", "qty": 1, "unit": "kom", "mat_min": 1500, "mat_max": 2800, "rad_min": 0, "rad_max": 0, "tot_min": 1500, "tot_max": 2800, "note": "Roto BiH ili Eco-Plast; trajna 30+ god"}, {"num": 81, "name": "Cijevi PVC za odvod od kuće do septičke", "qty": 1, "unit": "paušal", "mat_min": 200, "mat_max": 400, "rad_min": 200, "rad_max": 400, "tot_min": 400, "tot_max": 800, "note": "PVC Ø110, sa nagibima"}, {"num": 82, "name": "Drenaža iz septičke (apsorbciono polje)", "qty": 1, "unit": "paušal", "mat_min": 200, "mat_max": 500, "rad_min": 300, "rad_max": 600, "tot_min": 500, "tot_max": 1100, "note": "Drenažne cijevi + šljunak"}, {"num": 83, "name": "Zatrpavanje + niveliranje (poslije bagera)", "qty": 1, "unit": "paušal", "mat_min": 100, "mat_max": 250, "rad_min": 150, "rad_max": 300, "tot_min": 250, "tot_max": 550, "note": "Ručno doravnavanje"}, {"num": 84, "name": "--- OGRADA OKO PARCELE 50m (2 strane, minus 8m vrata) ---", "qty": 0, "unit": null, "mat_min": 0, "mat_max": 0, "rad_min": 0, "rad_max": 0, "tot_min": 0, "tot_max": 0, "note": "Cokla 50m + ograda 42m + 2 klizna vrata 4m"}, {"num": 85, "name": "Cokla — beton 50×30cm sa armaturom (50m, ide pod sve)", "qty": 50, "unit": "m'", "mat_min": 25, "mat_max": 40, "rad_min": 25, "rad_max": 40, "tot_min": 2500, "tot_max": 4000, "note": "Cokla ide pod ograde I pod vrata; jednom liva"}, {"num": 86, "name": "Stubovi za ogradu (svaki 2-3m, na 42m)", "qty": 16, "unit": "kom", "mat_min": 30, "mat_max": 60, "rad_min": 20, "rad_max": 40, "tot_min": 800, "tot_max": 1600, "note": "Metalni stubovi 60×60mm, plus po 1 stub na svakoj strani vrata"}, {"num": 87, "name": "Panelna ograda (42m, visina 1.5-1.8m)", "qty": 42, "unit": "m'", "mat_min": 35, "mat_max": 70, "rad_min": 15, "rad_max": 30, "tot_min": 2100, "tot_max": 4200, "note": "Pocinčana plastificirana, antracit/zelena"}, {"num": 88, "name": "Klizna vrata 4m (ulaz za auto)", "qty": 1, "unit": "kom", "mat_min": 2200, "mat_max": 3500, "rad_min": 400, "rad_max": 700, "tot_min": 2600, "tot_max": 4200, "note": "Sa motorom, daljinskim, mehanizmom"}, {"num": 89, "name": "Klizna vrata 4m (drugi ulaz za goste)", "qty": 1, "unit": "kom", "mat_min": 2000, "mat_max": 3200, "rad_min": 350, "rad_max": 600, "tot_min": 2350, "tot_max": 3800, "note": "Sa motorom, slično ali eventualno jednostavnije"}, {"num": 90, "name": "Električne instalacije za klizna vrata (kablovi, daljinski)", "qty": 1, "unit": "paušal", "mat_min": 200, "mat_max": 500, "rad_min": 200, "rad_max": 400, "tot_min": 400, "tot_max": 900, "note": "Kablovi do oba kapija + interfon eventualno"}], "subtotal": {"mat_min": 13740, "mat_max": 27845, "rad_min": 8310, "rad_max": 15600, "tot_min": 22050, "tot_max": 43445}}, {"title": "OSTALO", "items": [{"num": 91, "name": "Projektna dokumentacija (statika, dozvola)", "qty": 1, "unit": "paušal", "mat_min": 100, "mat_max": 300, "rad_min": 400, "rad_max": 1200, "tot_min": 500, "tot_max": 1500, "note": "Statika za noseći zid + projekat"}], "subtotal": {"mat_min": 100, "mat_max": 300, "rad_min": 400, "rad_max": 1200, "tot_min": 500, "tot_max": 1500}}], "totals": {"mat_min": 74836.65, "mat_max": 141264.9, "rad_min": 49673.4, "rad_max": 87744.3, "tot_min": 124510.05, "tot_max": 229009.2}};
+
+const KM_TO_EUR = 1.95583;
+const HOUSE_M2 = 115;
+
+let currentView = 'all'; // 'all', 'material', 'labor'
+let reservePercent = 5;
+
+function fmt(num) {
+  if (num === null || num === undefined || isNaN(num)) return '—';
+  return Math.round(num).toLocaleString('de-DE');
+}
+
+function fmtEur(num) {
+  if (!num) return '—';
+  return Math.round(num).toLocaleString('de-DE');
+}
+
+function getViewMultiplier() {
+  return {
+    matMult: currentView === 'labor' ? 0 : 1,
+    radMult: currentView === 'material' ? 0 : 1,
+  };
+}
+
+function calcRow(item) {
+  const qty = parseFloat(item.qty) || 0;
+  const matMin = parseFloat(item.mat_min) || 0;
+  const matMax = parseFloat(item.mat_max) || 0;
+  const radMin = parseFloat(item.rad_min) || 0;
+  const radMax = parseFloat(item.rad_max) || 0;
+  const { matMult, radMult } = getViewMultiplier();
+  return {
+    matMin: qty * matMin,
+    matMax: qty * matMax,
+    radMin: qty * radMin,
+    radMax: qty * radMax,
+    totMin: qty * (matMin * matMult + radMin * radMult),
+    totMax: qty * (matMax * matMult + radMax * radMult),
+  };
+}
+
+function calcSection(section) {
+  let mm = 0, mx = 0, rm = 0, rx = 0, tm = 0, tx = 0;
+  for (const item of section.items) {
+    const r = calcRow(item);
+    mm += r.matMin; mx += r.matMax;
+    rm += r.radMin; rx += r.radMax;
+    tm += r.totMin; tx += r.totMax;
+  }
+  return { matMin: mm, matMax: mx, radMin: rm, radMax: rx, totMin: tm, totMax: tx };
+}
+
+function calcGrandTotal() {
+  let mm = 0, mx = 0, rm = 0, rx = 0, tm = 0, tx = 0;
+  for (const section of DATA.sections) {
+    const s = calcSection(section);
+    mm += s.matMin; mx += s.matMax;
+    rm += s.radMin; rx += s.radMax;
+    tm += s.totMin; tx += s.totMax;
+  }
+  const reserve = reservePercent / 100;
+  return {
+    matMin: mm * (1 + reserve), matMax: mx * (1 + reserve),
+    radMin: rm * (1 + reserve), radMax: rx * (1 + reserve),
+    totMin: tm * (1 + reserve), totMax: tx * (1 + reserve),
+  };
+}
+
+function renderSection(section, idx) {
+  const s = calcSection(section);
+  return `
+    <div class="section" data-section-idx="${idx}">
+      <div class="section-header" onclick="toggleSection(${idx})">
+        <div class="section-title">
+          <span class="section-num">§ ${String(idx + 1).padStart(2, '0')}</span>
+          <span>${section.title}</span>
+        </div>
+        <div style="display:flex; gap: 1.5rem; align-items: center;">
+          <span class="section-total">
+            ${fmt(s.totMin)} – ${fmt(s.totMax)} KM
+          </span>
+          <span class="section-toggle-icon">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Stavka</th>
+              <th class="center">Količina</th>
+              <th class="center">Jed.</th>
+              <th class="num" colspan="2">Materijal (KM/jed)</th>
+              <th class="num" colspan="2">Rad (KM/jed)</th>
+              <th class="num" colspan="2">Ukupno (KM)</th>
+              <th>Napomena</th>
+            </tr>
+            <tr style="font-size: 0.65rem;">
+              <th></th><th></th><th></th><th></th>
+              <th class="num">Min</th>
+              <th class="num">Max</th>
+              <th class="num">Min</th>
+              <th class="num">Max</th>
+              <th class="num">Min</th>
+              <th class="num">Max</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${section.items.map((item, i) => {
+              const r = calcRow(item);
+              return `
+                <tr>
+                  <td class="center">${item.num}</td>
+                  <td class="item-name">${item.name}</td>
+                  <td class="center">
+                    <input type="number" class="editable qty-input" value="${item.qty}" step="0.5"
+                      data-section="${idx}" data-item="${i}" data-field="qty">
+                  </td>
+                  <td class="center">${item.unit || ''}</td>
+                  <td class="num">
+                    <input type="number" class="editable" value="${item.mat_min}" step="1"
+                      data-section="${idx}" data-item="${i}" data-field="mat_min">
+                  </td>
+                  <td class="num">
+                    <input type="number" class="editable" value="${item.mat_max}" step="1"
+                      data-section="${idx}" data-item="${i}" data-field="mat_max">
+                  </td>
+                  <td class="num">
+                    <input type="number" class="editable" value="${item.rad_min}" step="1"
+                      data-section="${idx}" data-item="${i}" data-field="rad_min">
+                  </td>
+                  <td class="num">
+                    <input type="number" class="editable" value="${item.rad_max}" step="1"
+                      data-section="${idx}" data-item="${i}" data-field="rad_max">
+                  </td>
+                  <td class="num total-cell" data-row-tot-min="${idx}-${i}">${fmt(r.totMin)}</td>
+                  <td class="num total-cell" data-row-tot-max="${idx}-${i}">${fmt(r.totMax)}</td>
+                  <td class="note">${item.note || ''}</td>
+                </tr>
+              `;
+            }).join('')}
+            <tr class="subtotal" data-subtotal-idx="${idx}">
+              <td colspan="4" class="label">Podzbroj</td>
+              <td class="num">${fmt(s.matMin)}</td>
+              <td class="num">${fmt(s.matMax)}</td>
+              <td class="num">${fmt(s.radMin)}</td>
+              <td class="num">${fmt(s.radMax)}</td>
+              <td class="num total-cell">${fmt(s.totMin)}</td>
+              <td class="num total-cell">${fmt(s.totMax)}</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function render() {
+  const container = document.getElementById('sections-container');
+  container.innerHTML = DATA.sections.map((s, i) => renderSection(s, i)).join('');
+  attachInputListeners();
+  updateTotals();
+}
+
+function attachInputListeners() {
+  document.querySelectorAll('.editable').forEach(input => {
+    input.addEventListener('input', (e) => {
+      const sectionIdx = parseInt(e.target.dataset.section);
+      const itemIdx = parseInt(e.target.dataset.item);
+      const field = e.target.dataset.field;
+      const val = parseFloat(e.target.value) || 0;
+      DATA.sections[sectionIdx].items[itemIdx][field] = val;
+      updateRow(sectionIdx, itemIdx);
+      updateSubtotal(sectionIdx);
+      updateTotals();
+    });
+  });
+}
+
+function updateRow(sectionIdx, itemIdx) {
+  const item = DATA.sections[sectionIdx].items[itemIdx];
+  const r = calcRow(item);
+  document.querySelector(`[data-row-tot-min="${sectionIdx}-${itemIdx}"]`).textContent = fmt(r.totMin);
+  document.querySelector(`[data-row-tot-max="${sectionIdx}-${itemIdx}"]`).textContent = fmt(r.totMax);
+}
+
+function updateSubtotal(sectionIdx) {
+  const section = DATA.sections[sectionIdx];
+  const s = calcSection(section);
+  const tr = document.querySelector(`[data-subtotal-idx="${sectionIdx}"]`);
+  if (!tr) return;
+  const cells = tr.querySelectorAll('td.num');
+  cells[0].textContent = fmt(s.matMin);
+  cells[1].textContent = fmt(s.matMax);
+  cells[2].textContent = fmt(s.radMin);
+  cells[3].textContent = fmt(s.radMax);
+  cells[4].textContent = fmt(s.totMin);
+  cells[5].textContent = fmt(s.totMax);
+  // Header total
+  const header = document.querySelector(`[data-section-idx="${sectionIdx}"] .section-total`);
+  if (header) header.textContent = `${fmt(s.totMin)} – ${fmt(s.totMax)} KM`;
+}
+
+function updateAllSubtotals() {
+  DATA.sections.forEach((_, idx) => updateSubtotal(idx));
+  // Also update all row totals
+  DATA.sections.forEach((section, sIdx) => {
+    section.items.forEach((_, iIdx) => updateRow(sIdx, iIdx));
+  });
+}
+
+function updateTotals() {
+  const gt = calcGrandTotal();
+  // Top summary cards
+  document.getElementById('grand-total-min').textContent = fmt(gt.totMin);
+  document.getElementById('grand-total-range').textContent = `do ${fmt(gt.totMax)}`;
+  document.getElementById('material-total').textContent = fmt(gt.matMin);
+  document.getElementById('material-range').textContent = `do ${fmt(gt.matMax)}`;
+  document.getElementById('labor-total').textContent = fmt(gt.radMin);
+  document.getElementById('labor-range').textContent = `do ${fmt(gt.radMax)}`;
+  document.getElementById('eur-total').textContent = fmtEur(gt.totMin / KM_TO_EUR);
+  document.getElementById('eur-range').textContent = `do ${fmtEur(gt.totMax / KM_TO_EUR)}`;
+
+  // Grand total bar
+  document.getElementById('gt-total-min').textContent = fmt(gt.totMin) + ' KM';
+  document.getElementById('gt-total-range').textContent = `do ${fmt(gt.totMax)} KM`;
+  document.getElementById('gt-per-m2').textContent = fmt(gt.totMin / HOUSE_M2);
+  document.getElementById('gt-per-m2-range').textContent = `do ${fmt(gt.totMax / HOUSE_M2)} KM/m²`;
+  document.getElementById('gt-eur').textContent = fmtEur(gt.totMin / KM_TO_EUR);
+  document.getElementById('gt-eur-range').textContent = `do ${fmtEur(gt.totMax / KM_TO_EUR)} EUR`;
+}
+
+function toggleSection(idx) {
+  const section = document.querySelector(`[data-section-idx="${idx}"]`);
+  section.classList.toggle('collapsed');
+}
+
+document.getElementById('view-toggle').addEventListener('click', (e) => {
+  if (e.target.tagName !== 'BUTTON') return;
+  document.querySelectorAll('#view-toggle button').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  currentView = e.target.dataset.view;
+  updateAllSubtotals();
+  updateTotals();
+});
+
+document.getElementById('reserve').addEventListener('input', (e) => {
+  reservePercent = parseFloat(e.target.value) || 0;
+  updateTotals();
+});
+
+const ORIGINAL_DATA = JSON.parse(JSON.stringify(DATA));
+function resetAll() {
+  if (!confirm('Resetovati sve vrijednosti na originalne?')) return;
+  DATA.sections = JSON.parse(JSON.stringify(ORIGINAL_DATA.sections));
+  document.getElementById('reserve').value = 5;
+  reservePercent = 5;
+  document.querySelectorAll('#view-toggle button').forEach(b => b.classList.remove('active'));
+  document.querySelector('#view-toggle button[data-view="all"]').classList.add('active');
+  currentView = 'all';
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
